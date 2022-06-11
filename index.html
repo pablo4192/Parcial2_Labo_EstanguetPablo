@@ -785,6 +785,106 @@
             return true;
         }
         
+        function EliminarFila()
+        {
+            let filas = cuerpoTabla.childNodes;
+            let fila;
+
+            for(let i = 0; i < filas.length; i++)
+            {
+                fila = filas[i].childNodes;
+                if(fila[0] != null)
+                {
+                    if(fila[0].innerHTML == txtId.value)
+                    {
+                        cuerpoTabla.removeChild(filas[i]);
+                        let j = 0;
+                        
+                        arrayGenerico.forEach((o) => {
+                        
+                            if(o.id == txtId.value)
+                            {
+                                
+                                arrayGenerico.splice(j,1);
+                            }
+                            j++;
+                        });
+                        
+                        j = 0;
+                        arrayAutos.forEach((a) => {
+                            
+                            if(a.id == txtId.value)
+                            {
+                                arrayAutos.splice(j,1);
+                            }
+                            j++;
+                        });
+
+                        j = 0;
+                        arrayCamioneta.forEach((c) => {
+                            
+                            if(c.id == txtId.value)
+                            {
+                                
+                                arrayCamioneta.splice(j,1);
+                                
+                                
+                            }
+                            j++;
+                        });
+                        
+                        break;
+                    }
+                }
+            }
+            
+            return true;
+
+        }
+
+
+        //Eliminar
+        async function EliminarEnDB()
+        {
+            let id = '{"id":'+txtId.value+'}';
+            
+
+            try
+            {
+                MostrarSpinner(true);
+
+                let promesa = await fetch("http://localhost:5000/vehiculos/eliminarvehiculo", {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: id
+                });
+
+                if(promesa.ok)
+                {
+                    let respuesta = await promesa.text();
+                    EliminarFila();
+                    alert(respuesta);
+                }
+                else
+                {
+                    alert("El servidor envio un status != a 200");
+                }
+                
+
+            }
+            catch(error)
+            {
+                alert("Algo salio mal, no se elimino el vehiculo");
+            }
+            finally
+            {
+                MostrarSpinner(false);
+            }
+            
+            
+        }
+
+        
         
         //AddEvents
         cuerpoTabla.addEventListener("click", (e) => {
@@ -830,7 +930,7 @@
             }
             else if(tituloFrm.innerHTML == "Formulario Baja")
             {
-
+                EliminarEnDB();
             }
             else if(tituloFrm.innerHTML == "Formulario Modificacion")
             {
